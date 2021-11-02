@@ -19,4 +19,3 @@ class Location(ID_Mixin, Name_Mixin, Description_Mixin, EventID_Mixin, Cooldown_
     """Suggested `Level` for this `Location`"""
     difficulty: int
     """`Difficulty` of this `Location`"""
-
