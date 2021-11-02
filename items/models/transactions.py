@@ -1,10 +1,10 @@
 from typing import List
 
-from models.mixins import *
-from models.server import Server, ServerID_Mixin
-from models.characters import CharacterID_Mixin
-from models.characters import Character
-from models.items import Instance, InstanceID_Mixin
+from items.models.mixins import ID_Mixin, Timestamp_Mixin, Quantity_Mixin
+
+from items.models.server import Server, ServerID_Mixin
+from items.models.characters import Character, CharacterID_Mixin
+from items.models.items import Instance, InstanceID_Mixin
 
 class Transaction(ID_Mixin, ServerID_Mixin, Timestamp_Mixin):
     """

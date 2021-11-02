@@ -1,11 +1,19 @@
-from typing import List, Union
+from __future__ import annotations
 
-from models.characters import CharacterID_Mixin, Character
-from models.items import InstanceID_Mixin
-from models.mixins import Quantity_Mixin
-from models.transactions import Transaction
+from typing import List, Union, TYPE_CHECKING
 
-from ..exceptions import NotEnoughItems
+#from models.characters import CharacterID_Mixin
+class CharacterID_Mixin:
+    pass
+
+from items.models.mixins import Quantity_Mixin
+from items.models.items import InstanceID_Mixin
+
+from items.exceptions import NotEnoughItems
+
+if TYPE_CHECKING:
+    from items.models.transactions import Transaction
+    from items.models.characters import Character
 
 class Inventory(CharacterID_Mixin, InstanceID_Mixin, Quantity_Mixin):
     """

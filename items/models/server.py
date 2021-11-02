@@ -1,4 +1,4 @@
-from .mixins import ID_Mixin
+from items.models.mixins import ID_Mixin
 
 class Server(ID_Mixin):
     """

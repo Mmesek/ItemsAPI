@@ -1,9 +1,9 @@
 from datetime import datetime
 
-from models.mixins import *
+from items.models.mixins import ID_Mixin, Name_Mixin, Description_Mixin
 
-from models.attributes import Attributes_Mixin
-from models.skills import Skills_Mixin
+from items.models.attributes import Attributes_Mixin
+from items.models.skills import Skills_Mixin
 
 class Event(ID_Mixin, Name_Mixin, Description_Mixin, Attributes_Mixin, Skills_Mixin):
     """

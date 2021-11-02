@@ -1,6 +1,6 @@
 from typing import List
 
-from models.mixins import *
+from items.models.mixins import ID_Mixin, Name_Mixin, Description_Mixin
 
 class Attribute(ID_Mixin, Name_Mixin, Description_Mixin):
     """Associated `Attribute`"""

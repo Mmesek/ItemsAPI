@@ -1,10 +1,10 @@
 from typing import List
 
-from models.attributes import Attributes_Mixin
-from models.skills import Skills_Mixin
-from models.locations import LocationID_Mixin
-from models.items import ItemID_Mixin, Item
-from models.events import EventID_Mixin, Event
+from items.models.attributes import Attributes_Mixin
+from items.models.skills import Skills_Mixin
+from items.models.locations import LocationID_Mixin
+from items.models.items import ItemID_Mixin, Item
+from items.models.events import EventID_Mixin, Event
 
 class Drop(LocationID_Mixin, ItemID_Mixin, EventID_Mixin, Attributes_Mixin, Skills_Mixin):
     """

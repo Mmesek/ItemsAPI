@@ -1,5 +1,9 @@
-from .mixins import ID_Mixin
-from .characters import Character
+from typing import TYPE_CHECKING
+
+from items.models.mixins import ID_Mixin
+
+if TYPE_CHECKING:
+    from items.models.characters import Character
 
 class User(ID_Mixin):
     """
@@ -9,6 +13,7 @@ class User(ID_Mixin):
         """
         Create a new `Character` for this `User`
         """
+        from items.models.characters import Character
         return Character(user_id=self.id, server_id=server)
 
 class UserID_Mixin:
