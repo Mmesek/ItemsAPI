@@ -9,5 +9,5 @@ BEGIN
     WHERE "Character_Inventory".character_id = "get_quantity".character_id
     AND "Character_Inventory".instance_id = "get_quantity".instance_id
     INTO quantity;
-RETURN quantity;
+RETURN COALESCE(quantity, 0.0);
 END$$
