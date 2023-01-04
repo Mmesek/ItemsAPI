@@ -1,19 +1,28 @@
 CREATE OR REPLACE VIEW "Leaderboard" AS
 SELECT 
-    "Owner".server_id,
-    "Owner".user_id,
-    "Instance".event_id,
-    "Item".name,
-    sum("Inventory".quantity) as quantity
+    "items"."Event".name as event,
+    "items"."Inventory".item,
+    "items"."Inventory".server_id,
+    "items"."Inventory".user_id,
+    "items"."Inventory".quantity as quantity
 FROM (
-    "Inventory"
-        JOIN "Instance" ON ("Instance".id = "Inventory".item)
-        JOIN "Item" ON ("Instance".item_id = "Item".id)
-        JOIN "Owner" ON ("Inventory".id = "Owner".character_id)
+    "Inventory" 
+    LEFT JOIN 
+        "items"."Event"
+    ON 
+        "items"."Event".id = "Inventory".event_id
 )
 GROUP BY 
-    "Owner".server_id, 
-    "Owner".user_id, 
-    "Item".name, 
-    "Instance".event_id
+    server_id, 
+    user_id, 
+    item, 
+    event_id
 ORDER BY quantity DESC;
+
+COMMENT ON VIEW "Leaderboard" IS 'Items Leaderboard';
+
+COMMENT ON COLUMN "Leaderboard"."event" IS 'Name of Event';
+COMMENT ON COLUMN "Leaderboard"."item" IS 'Name of Item';
+COMMENT ON COLUMN "Leaderboard"."server_id" IS 'ID of related Server';
+COMMENT ON COLUMN "Leaderboard"."user_id" IS 'ID of owning User';
+COMMENT ON COLUMN "Leaderboard"."quantity" IS 'Amount of owned instance by Character''s inventory';
