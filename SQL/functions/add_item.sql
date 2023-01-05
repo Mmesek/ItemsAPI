@@ -52,3 +52,5 @@ BEGIN
 -- Return array of users that received item
 RETURN _users;
 END$$
+
+COMMENT ON FUNCTION "add_item" IS 'Adds item to specified users that have required items and removes required item from';

@@ -28,3 +28,5 @@ BEGIN
 
 RETURN _character_id;
 END$$
+
+COMMENT ON FUNCTION "get_character" IS 'Returns character for server/user combination. Creates new character if combination is not found';

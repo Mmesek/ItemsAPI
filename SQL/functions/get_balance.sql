@@ -16,3 +16,5 @@ BEGIN
             "items"."Transaction_Instances".character_id
         ), 0.0);
 END$$
+
+COMMENT ON FUNCTION "get_balance" IS 'Returns item balance of user';

@@ -37,3 +37,5 @@ BEGIN
 
 RETURN transaction_id;
 END$$
+
+COMMENT ON FUNCTION "add_transaction" IS 'Adds transaction item to specified users if sender has more than enough items to send, otherwise returns NULL. Optionally creates new transaction';
