@@ -4,7 +4,8 @@ CREATE OR REPLACE FUNCTION list_leaderboards
         after TIMESTAMP DEFAULT TIMESTAMP '2020-1-1', 
         before TIMESTAMP DEFAULT now(), 
         limit_at INT DEFAULT 100,
-        user_id BIGINT DEFAULT NULL
+        user_id BIGINT DEFAULT NULL,
+        item VARCHAR DEFAULT NULL
     )
 RETURNS TABLE (name VARCHAR, instance_id BIGINT, starts TIMESTAMPTZ, ends TIMESTAMPTZ)
 AS
@@ -32,6 +33,10 @@ BEGIN
             OR "leaderboards".user_id = list_leaderboards.user_id
         )
         AND "items"."Instance".event_id IS NOT NULL
+        AND (
+            list_leaderboards.item IS NULL
+            OR "items"."Instance".name ILIKE list_leaderboards.item
+        )
     )
     LOOP
         name := _event.name;
