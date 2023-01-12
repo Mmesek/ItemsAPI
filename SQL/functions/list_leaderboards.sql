@@ -45,27 +45,13 @@ BEGIN
         IF _event.repeatable THEN
             _year = EXTRACT(year FROM now())::INTEGER;
 
-            starts := make_timestamp(
-                _year, 
-                EXTRACT(month FROM _event.start_date)::INTEGER, 
-                EXTRACT(day FROM _event.start_date)::INTEGER,
-                EXTRACT(hour FROM _event.start_date)::INTEGER,
-                EXTRACT(minute FROM _event.start_date)::INTEGER,
-                EXTRACT(second FROM _event.start_date)::INTEGER
-            );
-
+            starts := move_timestamp_to_year(_event.start_date);
+            
             IF EXTRACT(year FROM _event.end_date) != EXTRACT(year FROM _event.start_date) THEN
                 _year = _year + EXTRACT(year FROM _event.end_date) - EXTRACT(year FROM _event.start_date);
             END IF;
-
-            ends := make_timestamp(
-                _year, 
-                EXTRACT(month FROM _event.end_date)::INTEGER, 
-                EXTRACT(day FROM _event.end_date)::INTEGER,
-                EXTRACT(hour FROM _event.start_date)::INTEGER,
-                EXTRACT(minute FROM _event.start_date)::INTEGER,
-                EXTRACT(second FROM _event.start_date)::INTEGER
-            );
+            
+            ends := move_timestamp_to_year(_event.end_date, _year);
         ELSE
             starts := _event.start_date;
             ends := _event.end_date;
