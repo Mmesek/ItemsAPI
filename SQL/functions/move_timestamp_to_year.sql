@@ -2,13 +2,10 @@ DROP FUNCTION move_timestamp_to_year;
 CREATE OR REPLACE FUNCTION move_timestamp_to_year
     (
         current TIMESTAMPtz,
-        new_year INTEGER DEFAULT NULL
+        new_year INTEGER DEFAULT EXTRACT(year FROM now())::INTEGER
     ) 
     RETURNS TIMESTAMPtz LANGUAGE plpgsql AS $$
 BEGIN
-    IF new_year IS NULL THEN
-        new_year = EXTRACT(year FROM now())::INTEGER;
-    END IF;
     RETURN make_timestamp(
         new_year, 
         EXTRACT(month FROM current)::INTEGER, 
