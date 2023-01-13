@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION add_transaction
+CREATE OR REPLACE FUNCTION new_transaction
     (
         sender_id BIGINT, 
         recipent_id BIGINT, 
@@ -36,6 +36,6 @@ BEGIN
     END IF;
 
 RETURN transaction_id;
-END$$
+END$$;
 
-COMMENT ON FUNCTION "add_transaction" IS 'Adds transaction item to specified users if sender has more than enough items to send, otherwise returns NULL. Optionally creates new transaction';
+COMMENT ON FUNCTION "new_transaction" IS 'Adds transaction item to specified users if sender has more than enough items to send, otherwise returns NULL. Optionally creates new transaction';
