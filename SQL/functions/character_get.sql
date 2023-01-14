@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION get_character 
+CREATE OR REPLACE FUNCTION character_get 
     ("server_id" bigint, "user_id" bigint) 
     RETURNS bigint LANGUAGE plpgsql AS $$
 DECLARE
@@ -7,8 +7,8 @@ BEGIN
     -- Get character (if exists)
     SELECT "Owner".character_id
         FROM "Owner" 
-        WHERE "Owner".user_id = get_character.user_id 
-        AND "Owner".server_id = get_character.server_id
+        WHERE "Owner".user_id = character_get.user_id 
+        AND "Owner".server_id = character_get.server_id
     INTO _character_id;
 
     -- Check if character exists
@@ -23,10 +23,10 @@ BEGIN
 
         -- Add character to this user
         INSERT INTO "Owner" (user_id, server_id, character_id) 
-        VALUES (get_character.user_id, server_id, _character_id);
+        VALUES (character_get.user_id, server_id, _character_id);
     END IF;
 
 RETURN _character_id;
 END$$
 
-COMMENT ON FUNCTION "get_character" IS 'Returns character for server/user combination. Creates new character if combination is not found';
+COMMENT ON FUNCTION "character_get" IS 'Returns character for server/user combination. Creates new character if combination is not found';

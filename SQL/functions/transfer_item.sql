@@ -1,24 +1,28 @@
-CREATE OR REPLACE FUNCTION add_item
-    (server_id BIGINT, user_ids BIGINT[], instance_id BIGINT, quantity REAL, 
-    required_instance_id INT DEFAULT null, required_quantity REAL DEFAULT null
-    ) 
+CREATE OR REPLACE FUNCTION transfer_item
+    (
+        server_id BIGINT, user_ids BIGINT[], instance_id BIGINT, quantity REAL, 
+        required_instance_id INT DEFAULT null, required_quantity REAL DEFAULT null,
+        _transaction_id BIGINT DEFAULT null
+    )
     RETURNS BIGINT[] LANGUAGE plpgsql AS $$
 DECLARE
     _character_id BIGINT;
     _user_id BIGINT;
     _users BIGINT[];
     _characters BIGINT[];
-    _transaction_id BIGINT;
 BEGIN
     -- For each user
     FOREACH _user_id IN ARRAY user_ids
     LOOP
         -- Retrieve user's character, or add new character in case user is not in Database
-        SELECT get_character(server_id, _user_id) INTO _character_id;
+        SELECT character_get(server_id, _user_id) INTO _character_id;
 
         -- Check if user has required item, if so, check if user has less than required and skip
         IF required_instance_id is not null AND (
-            SELECT get_balance(_character_id, required_instance_id)
+            SELECT COALESCE(quantity, 0.0)
+            FROM "inventories"
+            WHERE "inventories".character_id = _character_id
+            AND "inventories".instance_id = required_instance_id
         ) < required_quantity THEN
             CONTINUE;
         END IF;
@@ -30,8 +34,10 @@ BEGIN
 
     -- Check if any user matches criteria
     IF CARDINALITY(_users) != 0 THEN
-        -- Create new transaction
-        INSERT INTO "items"."Transaction" DEFAULT VALUES RETURNING id INTO _transaction_id;
+        IF _transaction_id IS NULL THEN
+            -- Create new transaction
+            INSERT INTO "items"."Transaction" DEFAULT VALUES RETURNING id INTO _transaction_id;
+        END IF;
 
         -- For each user that has enough, add item
         FOREACH _character_id IN ARRAY _characters
@@ -39,18 +45,18 @@ BEGIN
             -- Check if there is any required item
             IF required_instance_id is not null THEN
                 -- User apparently has more than enough, deduce required quantity
-                INSERT INTO "items"."Transaction_Instances" (transaction_id, instance_id, quantity, character_id)
-                VALUES (_transaction_id, required_instance_id, -required_quantity, _character_id);
+                PERFORM transfer(_character_id, NULL, required_instance_id, required_quantity, _transaction_id);
             END IF;
 
-            -- Add new entry with claimed item
-            INSERT INTO "items"."Transaction_Instances" (transaction_id, instance_id, quantity, character_id)
-            VALUES (_transaction_id, instance_id, quantity, _character_id);
+            IF instance_id is not null THEN
+                -- Add new entry with claimed item
+                PERFORM transfer(NULL, _character_id, instance_id, quantity, _transaction_id);
+            END IF;
         END LOOP;
     END IF;
 
 -- Return array of users that received item
 RETURN _users;
-END$$
+END$$;
 
-COMMENT ON FUNCTION "add_item" IS 'Adds item to specified users that have required items and removes required item from';
+COMMENT ON FUNCTION "transfer_item" IS 'Adds item to specified users that have required items and removes required item from';

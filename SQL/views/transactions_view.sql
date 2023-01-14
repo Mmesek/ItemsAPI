@@ -34,7 +34,13 @@ AS $$
 BEGIN
 -- If character is not specified, try to fetch based on Server/User
 IF NEW.character_id IS NULL THEN
-    NEW.character_id = SELECT "Owner".character_id FROM "Owner" WHERE "Owner".user_id = NEW.user_id AND "Owner".server_id = NEW.server_id
+    SELECT 
+        "Owner".character_id
+    FROM "Owner" 
+    WHERE 
+        "Owner".user_id = NEW.user_id
+    AND "Owner".server_id = NEW.server_id 
+    INTO NEW.character_id;
 END IF;
 -- If character is not found, return
 IF NEW.character_id IS NULL THEN
@@ -42,10 +48,10 @@ IF NEW.character_id IS NULL THEN
 END IF;
 -- Check if quantity is positive value and create new transaction where character is a recipent
 IF NEW.quantity > 0 THEN
-    PERFORM new_transaction(NULL, NEW.character_id, NEW.instance_id, NEW.quantity);
+    PERFORM transfer(NULL, NEW.character_id, NEW.instance_id, NEW.quantity);
 ELSE
     -- Otherwise, try to create new transaction where character is a sender instead
-    IF (SELECT new_transaction(NEW.character_id, NULL, NEW.instance_id, -NEW.quantity)) IS NULL THEN
+    IF (SELECT transfer(NEW.character_id, NULL, NEW.instance_id, -NEW.quantity)) IS NULL THEN
         RETURN NULL;
     END IF;
 END IF;
@@ -58,7 +64,7 @@ ON "transactions"
 FOR EACH ROW
 EXECUTE FUNCTION _transaction_add();
 
-COMMENT ON FUNCTION add_transaction IS 'Adds new incoming transaction OR outgoing if quantity is below 0. Checks if character has enough to deduce before proceeding';
+COMMENT ON FUNCTION _transaction_add IS 'Adds new incoming transaction OR outgoing if quantity is below 0. Checks if character has enough to deduce before proceeding';
 COMMENT ON TRIGGER tg_add_transaction IS 'Instead of Insert executes add_transaction. Checks if quantity is negative, and if character has enough to deduce from';
 
 -- ************************************** Delete Trigger
@@ -69,7 +75,7 @@ LANGUAGE plpgsql
 AS $$
 BEGIN
 -- Try to create new transaction where character is a sender
-IF (SELECT new_transaction(OLD.character_id, NULL, OLD.instance_id, OLD.quantity)) IS NULL THEN
+IF (SELECT transfer(OLD.character_id, NULL, OLD.instance_id, OLD.quantity)) IS NULL THEN
     RETURN NULL;
 END IF;
 RETURN OLD;
@@ -81,5 +87,5 @@ ON "transactions"
 FOR EACH ROW
 EXECUTE FUNCTION _transaction_remove();
 
-COMMENT ON FUNCTION remove_transaction IS "Adds new outgoing transaction. Checks if character has enough to deduce before proceeding";
-COMMENT ON TRIGGER tg_remove_transaction IS "Instead of Delete executes remove_transaction. Checks if character has enough to deduce from";
+COMMENT ON FUNCTION _transaction_remove IS 'Adds new outgoing transaction. Checks if character has enough to deduce before proceeding';
+COMMENT ON TRIGGER tg_remove_transaction IS 'Instead of Delete executes remove_transaction. Checks if character has enough to deduce from';
