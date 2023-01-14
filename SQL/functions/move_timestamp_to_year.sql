@@ -1,4 +1,3 @@
-DROP FUNCTION move_timestamp_to_year;
 CREATE OR REPLACE FUNCTION move_timestamp_to_year
     (
         current TIMESTAMPtz,
@@ -14,6 +13,6 @@ BEGIN
         EXTRACT(minute FROM current)::INTEGER,
         EXTRACT(second FROM current)::INTEGER
     );
-END$$
+END$$;
 
 COMMENT ON FUNCTION move_timestamp_to_year IS 'Shifts date to current (or specified) year while leaving month/day intact';
