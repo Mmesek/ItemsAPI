@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION list_leaderboards
+CREATE OR REPLACE FUNCTION leaderboards
     (
         server_id BIGINT, 
         after TIMESTAMP DEFAULT TIMESTAMP '2020-1-1', 
@@ -17,25 +17,25 @@ BEGIN
     FOR _event IN (
         SELECT DISTINCT 
             "items"."Instance".name, 
-            "leaderboards".instance_id,
+            "transactions".instance_id,
             "items"."Event".start_date,
             "items"."Event".end_date,
             "items"."Event_Attribute".bool as repeatable
-    FROM "leaderboards"
-    LEFT JOIN "items"."Instance" ON "items"."Instance".id = "leaderboards".instance_id
+    FROM "transactions"
+    LEFT JOIN "items"."Instance" ON "items"."Instance".id = "transactions".instance_id
     LEFT JOIN "items"."Event" ON "items"."Event".id = "items"."Instance".event_id
     LEFT JOIN "items"."Event_Attribute" ON "items"."Event_Attribute".event_id = "items"."Instance".event_id AND "items"."Event_Attribute".name = 'repeatable'
     WHERE 
-        "leaderboards".server_id = list_leaderboards.server_id
-        AND "leaderboards".timestamp BETWEEN list_leaderboards.after AND list_leaderboards.before
+        "transactions".server_id = leaderboards.server_id
+        AND "transactions".timestamp BETWEEN leaderboards.after AND leaderboards.before
         AND (
-            list_leaderboards.user_id IS NULL
-            OR "leaderboards".user_id = list_leaderboards.user_id
+            leaderboards.user_id IS NULL
+            OR "transactions".user_id = leaderboards.user_id
         )
         AND "items"."Instance".event_id IS NOT NULL
         AND (
-            list_leaderboards.item IS NULL
-            OR "items"."Instance".name ILIKE list_leaderboards.item
+            leaderboards.item IS NULL
+            OR "items"."Instance".name ILIKE leaderboards.item
         )
     )
     LOOP
@@ -61,4 +61,4 @@ BEGIN
 END$$
 LANGUAGE plpgsql;
 
-COMMENT ON FUNCTION "list_leaderboards" IS 'Returns available leaderboards on server';
+COMMENT ON FUNCTION "leaderboards" IS 'Returns available leaderboards on server';
