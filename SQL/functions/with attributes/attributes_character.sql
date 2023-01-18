@@ -1,0 +1,12 @@
+CREATE OR REPLACE FUNCTION character
+    ()
+    RETURNS
+LANGUAGE plpgsql
+AS $$
+DECLARE
+
+BEGIN
+
+END$$
+
+COMMENT ON FUNCTION "character" IS '';

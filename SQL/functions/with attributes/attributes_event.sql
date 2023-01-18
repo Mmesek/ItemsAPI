@@ -1,0 +1,12 @@
+CREATE OR REPLACE FUNCTION event
+    ()
+    RETURNS
+LANGUAGE plpgsql
+AS $$
+DECLARE
+
+BEGIN
+
+END$$
+
+COMMENT ON FUNCTION "event" IS '';

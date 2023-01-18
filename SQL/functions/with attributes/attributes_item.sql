@@ -1,0 +1,12 @@
+CREATE OR REPLACE FUNCTION item
+    ()
+    RETURNS
+LANGUAGE plpgsql
+AS $$
+DECLARE
+
+BEGIN
+
+END$$
+
+COMMENT ON FUNCTION "item" IS '';
