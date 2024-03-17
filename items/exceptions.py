@@ -1,2 +1,0 @@
-class NotEnoughItems(Exception):
-    pass
