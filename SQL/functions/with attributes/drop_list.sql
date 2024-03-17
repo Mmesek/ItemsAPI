@@ -1,0 +1,12 @@
+CREATE OR REPLACE FUNCTION drop_list
+    ()
+    RETURNS
+LANGUAGE plpgsql
+AS $$
+DECLARE
+
+BEGIN
+
+END$$
+
+COMMENT ON FUNCTION "drop_list" IS '';
